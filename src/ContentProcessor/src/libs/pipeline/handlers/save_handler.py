@@ -3,6 +3,8 @@
 
 import datetime
 import json
+import logging
+import os
 
 from libs.application.application_context import AppContext
 from libs.models.content_process import ContentProcess, Step_Outputs
@@ -13,6 +15,8 @@ from libs.pipeline.entities.schema import Schema
 from libs.pipeline.handlers.logics.evaluate_handler.model import DataExtractionResult
 from libs.pipeline.queue_handler_base import HandlerBase
 
+logger = logging.getLogger(__name__)
+
 
 class SaveHandler(HandlerBase):
     def __init__(self, appContext: AppContext, step_name: str, **data):
@@ -20,28 +24,6 @@ class SaveHandler(HandlerBase):
 
     async def execute(self, context: MessageContext) -> StepResult:
         print(context.data_pipeline.get_previous_step_result(self.handler_name))
-
-        # #########################################################
-        # # TODO : Save Step Result to Blob Storage
-        # # Check the steps that have been executed so far
-        # # and save the result of each step to blob storage.
-        # # For example, if the steps "extract", "map", and "evaluate" have been
-        # executed_steps = context.data_pipeline.pipeline_status.completed_steps
-
-        # # loop through the executed steps and save the result of each step
-        # for step in executed_steps:
-        #     if step == "extract":
-        #         artifact_type = ArtifactType.ExtractedContent
-        #     elif step == "map":
-        #         artifact_type = ArtifactType.SchemaMappedData
-        #     elif step == "evaluate":
-        #         artifact_type = ArtifactType.ScoreMergedData
-        #         continue  # Skip unknown steps
-
-        #     self.download_output_file_to_json_string(
-        #         processed_by=step,
-        #         artifact_type=artifact_type
-        #     )
 
         #########################################################
         # Get Results from All Steps - Content Understanding
@@ -166,6 +148,11 @@ class SaveHandler(HandlerBase):
             collection_name=self.application_context.configuration.app_cosmos_container_process,
         )
 
+        ##########################################################
+        # HubSpot Sync (non-fatal — pipeline never breaks)
+        ##########################################################
+        self._sync_to_hubspot(processed_result, context)
+
         # save process_output to blob storage.
         processed_history = context.data_pipeline.add_file(
             file_name="step_outputs.json", artifact_type=ArtifactType.SavedContent
@@ -208,13 +195,96 @@ class SaveHandler(HandlerBase):
             result={"result": result_file.name},
         )
 
+    def _sync_to_hubspot(self, processed_result: ContentProcess, context: MessageContext):
+        """
+        Sync completed processing result to HubSpot.
+        - FNOL documents   → HubSpot Ticket  (gated by HUBSPOT_ENABLE_FNOL_INTEGRATION=true)
+        - All other docs   → HubSpot Deal    (existing underwriting pipeline)
+        Non-fatal: any exception is logged and swallowed so the pipeline is never affected.
+        """
+        try:
+            client_id     = os.environ.get("HUBSPOT_CLIENT_ID")
+            client_secret = os.environ.get("HUBSPOT_CLIENT_SECRET")
+            refresh_token = os.environ.get("HUBSPOT_REFRESH_TOKEN")
+
+            if not all([client_id, client_secret, refresh_token]):
+                logger.debug("HubSpot credentials not configured — skipping sync")
+                return
+
+            from libs.hubspot_integration import (
+                sync_fnol_job_to_hubspot_ticket,
+                sync_job_to_hubspot,
+            )
+
+            # Build job_data dict that hubspot_integration.py expects
+            schema_name = ""
+            if processed_result.target_schema:
+                schema_name = getattr(processed_result.target_schema, "name", "") or ""
+
+            job_data = {
+                "id":              processed_result.process_id,
+                "status":          "COMPLETE",
+                "documentType":    schema_name,
+                "insuranceType":   self._infer_insurance_type(schema_name),
+                "extractedData":   processed_result.result,
+                "analysis":        {},
+                "analysisScoringJsonStr": json.dumps({
+                    "total_score": 0
+                }),
+                "blobUrl":         None,
+            }
+
+            # Detect FNOL
+            is_fnol = "FNOL" in schema_name.upper()
+            enable_fnol = os.environ.get(
+                "HUBSPOT_ENABLE_FNOL_INTEGRATION", "false"
+            ).strip().lower() in ("1", "true", "yes")
+
+            if is_fnol and enable_fnol:
+                ticket_id = sync_fnol_job_to_hubspot_ticket(
+                    job_data,
+                    client_id,
+                    client_secret,
+                    refresh_token,
+                    pipeline_id=os.environ.get("HUBSPOT_FNOL_PIPELINE_ID", "0"),
+                    stage_id=os.environ.get("HUBSPOT_FNOL_STAGE_ID", "1"),
+                )
+                logger.info(f"HubSpot FNOL ticket created: {ticket_id}")
+            else:
+                stage_mapping = {
+                    "COMPLETE": os.environ.get("HUBSPOT_UW_STAGE_COMPLETE", "1314763883"),
+                    "FAILED":   os.environ.get("HUBSPOT_UW_STAGE_FAILED",   "1314763886"),
+                }
+                deal_id = sync_job_to_hubspot(
+                    job_data,
+                    client_id,
+                    client_secret,
+                    refresh_token,
+                    pipeline_id=os.environ.get("HUBSPOT_UW_PIPELINE_ID", "877072527"),
+                    stage_mapping=stage_mapping,
+                )
+                logger.info(f"HubSpot UW deal created/updated: {deal_id}")
+
+        except Exception as e:
+            logger.warning(f"HubSpot sync failed (non-fatal): {e}", exc_info=True)
+
+    def _infer_insurance_type(self, schema_name: str) -> str:
+        """Infer insurance type from schema name for HubSpot deal property."""
+        schema_upper = schema_name.upper()
+        if "LIFE" in schema_upper:
+            return "life"
+        if "MARINE" in schema_upper or "CARGO" in schema_upper or "FNOL" in schema_upper:
+            return "marine"
+        if "CYBER" in schema_upper:
+            return "cyber"
+        if "PROPERTY" in schema_upper or "COMMERCIAL" in schema_upper:
+            return "property_casualty"
+        return "other"
+
     def _summarize_processed_time(self, step_results: list[StepResult]) -> str:
         """
         Summarize the processed time of all steps in the pipeline.
         """
-
-        # StepResult's elapsed is string format 00:00:00.000000
-        # Convert the elapsed time to seconds for each step then sum them up
         total_processed_time = 0
         for step_result in step_results:
             step_processed_time = 0
@@ -228,13 +298,11 @@ class SaveHandler(HandlerBase):
                 step_processed_time = 0
             total_processed_time += step_processed_time
 
-        # Convert total elapsed time to string format
         total_hours = int(total_processed_time // 3600)
         total_minutes = int((total_processed_time % 3600) // 60)
         total_seconds = int(total_processed_time % 60)
         total_milliseconds = int(
             (total_processed_time - int(total_processed_time)) * 1000
         )
-        # Format the total elapsed time as a string
         formatted_elapsed_time = f"{total_hours:02}:{total_minutes:02}:{total_seconds:02}.{total_milliseconds:03}"
         return formatted_elapsed_time
