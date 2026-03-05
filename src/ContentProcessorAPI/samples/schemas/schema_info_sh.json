@@ -8,5 +8,10 @@
         "File": "./propertyclaim.py",
         "ClassName": "PropertyLossDamageClaimForm",
         "Description": "Property Loss Damage Claim Form"
+    },
+    {
+        "File": "./marinecargofnol.py",
+        "ClassName": "MarineCargoFNOL",
+        "Description": "Marine Cargo First Notice of Loss"
     }
 ]
