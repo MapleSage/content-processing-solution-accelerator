@@ -261,3 +261,51 @@ else
     echo "  ❌ Failed to refresh Cognitive Services account '$CU_ACCOUNT_NAME'."
   fi
 fi
+
+# --- Rebind custom domain after every provision ---
+echo ""
+echo "============================================================"
+echo "Binding custom domain to web container app..."
+echo "============================================================"
+
+WEB_CUSTOM_DOMAIN=$(azd env get-value WEB_CUSTOM_DOMAIN 2>/dev/null || echo "")
+CAE_NAME=$(azd env get-value CONTAINER_APP_ENV_NAME 2>/dev/null || echo "")
+
+if [ -z "$WEB_CUSTOM_DOMAIN" ] || [ -z "$CAE_NAME" ]; then
+  echo "  ⚠️ WEB_CUSTOM_DOMAIN or CONTAINER_APP_ENV_NAME not set — skipping custom domain bind."
+else
+  echo "  Adding hostname $WEB_CUSTOM_DOMAIN to $CONTAINER_WEB_APP_NAME..."
+  az containerapp hostname add \
+    --name "$CONTAINER_WEB_APP_NAME" \
+    --resource-group "$RESOURCE_GROUP" \
+    --hostname "$WEB_CUSTOM_DOMAIN" \
+    --output none 2>/dev/null || true
+
+  CERT_NAME=$(az containerapp env certificate list \
+    --name "$CAE_NAME" \
+    --resource-group "$RESOURCE_GROUP" \
+    --query "[?contains(name, '$(echo $WEB_CUSTOM_DOMAIN | tr '.' '-' | cut -c1-20)')].name | [0]" \
+    -o tsv 2>/dev/null || echo "")
+
+  if [ -n "$CERT_NAME" ]; then
+    echo "  Binding certificate $CERT_NAME..."
+    az containerapp hostname bind \
+      --name "$CONTAINER_WEB_APP_NAME" \
+      --resource-group "$RESOURCE_GROUP" \
+      --environment "$CAE_NAME" \
+      --hostname "$WEB_CUSTOM_DOMAIN" \
+      --certificate "$CERT_NAME" \
+      --output none 2>/dev/null
+    echo "  ✅ Custom domain $WEB_CUSTOM_DOMAIN bound successfully."
+  else
+    echo "  No existing certificate found — requesting managed certificate..."
+    az containerapp hostname bind \
+      --name "$CONTAINER_WEB_APP_NAME" \
+      --resource-group "$RESOURCE_GROUP" \
+      --environment "$CAE_NAME" \
+      --hostname "$WEB_CUSTOM_DOMAIN" \
+      --validation-method CNAME \
+      --output none 2>/dev/null
+    echo "  ✅ Managed certificate requested for $WEB_CUSTOM_DOMAIN."
+  fi
+fi
