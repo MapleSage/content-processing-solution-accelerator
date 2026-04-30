@@ -38,6 +38,21 @@
     "imageTag": {
       "value": "${AZURE_ENV_IMAGETAG=latest_v2}"
     },
+    "webClientId": {
+      "value": "${WEB_CLIENT_ID}"
+    },
+    "webScope": {
+      "value": "${WEB_SCOPE}"
+    },
+    "apiScope": {
+      "value": "${API_SCOPE}"
+    },
+    "webRedirectUrl": {
+      "value": "${WEB_REDIRECT_URL=/}"
+    },
+    "webPostRedirectUrl": {
+      "value": "${WEB_POST_REDIRECT_URL=/}"
+    },
     "hubspotClientId": {
       "value": "${HUBSPOT_CLIENT_ID}"
     },

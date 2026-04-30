@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.42.1.51946",
-      "templateHash": "3066589530692543970"
+      "templateHash": "8374164069409442990"
     },
     "name": "Content Processing Solution Accelerator",
     "description": "Bicep template to deploy the Content Processing Solution Accelerator with AVM compliance."
@@ -218,6 +218,41 @@
       "defaultValue": "",
       "metadata": {
         "description": "Optional. Admin password for the Jumpbox Virtual Machine. Set to custom value if enablePrivateNetworking is true."
+      }
+    },
+    "webClientId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Required. Azure AD app registration client ID for the web frontend."
+      }
+    },
+    "webScope": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. Frontend API scope for the web app login request."
+      }
+    },
+    "apiScope": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. Backend API scope for the web app token request."
+      }
+    },
+    "webRedirectUrl": {
+      "type": "string",
+      "defaultValue": "/",
+      "metadata": {
+        "description": "Optional. Redirect URL after successful login."
+      }
+    },
+    "webPostRedirectUrl": {
+      "type": "string",
+      "defaultValue": "/",
+      "metadata": {
+        "description": "Optional. Redirect URL after logout."
       }
     },
     "hubspotClientId": {
@@ -36635,8 +36670,8 @@
         "avmContainerApp_API",
         "avmContainerApp_Workflow",
         "avmManagedIdentity",
-        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').storageQueue)]",
         "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').storageBlob)]",
+        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').storageQueue)]",
         "virtualNetwork"
       ]
     },
@@ -42929,10 +42964,10 @@
       },
       "dependsOn": [
         "avmAiServices",
-        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').aiServices)]",
-        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').cognitiveServices)]",
         "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').openAI)]",
+        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').aiServices)]",
         "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').contentUnderstanding)]",
+        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').cognitiveServices)]",
         "virtualNetwork"
       ]
     },
@@ -46133,8 +46168,8 @@
       },
       "dependsOn": [
         "avmAiServices_cu",
-        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').cognitiveServices)]",
         "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').contentUnderstanding)]",
+        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').cognitiveServices)]",
         "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').aiServices)]",
         "virtualNetwork"
       ]
@@ -51239,7 +51274,7 @@
                   },
                   {
                     "name": "APP_WEB_CLIENT_ID",
-                    "value": "<APP_REGISTRATION_CLIENTID>"
+                    "value": "[parameters('webClientId')]"
                   },
                   {
                     "name": "APP_WEB_AUTHORITY",
@@ -51247,19 +51282,19 @@
                   },
                   {
                     "name": "APP_WEB_SCOPE",
-                    "value": "<FRONTEND_API_SCOPE>"
+                    "value": "[parameters('webScope')]"
                   },
                   {
                     "name": "APP_API_SCOPE",
-                    "value": "<BACKEND_API_SCOPE>"
+                    "value": "[parameters('apiScope')]"
                   },
                   {
                     "name": "APP_REDIRECT_URL",
-                    "value": "/"
+                    "value": "[parameters('webRedirectUrl')]"
                   },
                   {
                     "name": "APP_POST_REDIRECT_URL",
-                    "value": "/"
+                    "value": "[parameters('webPostRedirectUrl')]"
                   },
                   {
                     "name": "APP_CONSOLE_LOG_ENABLED",

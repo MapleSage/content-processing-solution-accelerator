@@ -124,6 +124,21 @@ param vmAdminUsername string = ''
 @secure()
 param vmAdminPassword string = ''
 
+@description('Required. Azure AD app registration client ID for the web frontend.')
+param webClientId string = ''
+
+@description('Optional. Frontend API scope for the web app login request.')
+param webScope string = ''
+
+@description('Optional. Backend API scope for the web app token request.')
+param apiScope string = ''
+
+@description('Optional. Redirect URL after successful login.')
+param webRedirectUrl string = '/'
+
+@description('Optional. Redirect URL after logout.')
+param webPostRedirectUrl string = '/'
+
 @description('Optional. HubSpot OAuth client ID for FNOL/UW integration.')
 @secure()
 param hubspotClientId string = ''
@@ -1301,7 +1316,7 @@ module avmContainerApp_Web 'br/public:avm/res/app/container-app:0.22.1' = {
           }
           {
             name: 'APP_WEB_CLIENT_ID'
-            value: '<APP_REGISTRATION_CLIENTID>'
+            value: webClientId
           }
           {
             name: 'APP_WEB_AUTHORITY'
@@ -1309,19 +1324,19 @@ module avmContainerApp_Web 'br/public:avm/res/app/container-app:0.22.1' = {
           }
           {
             name: 'APP_WEB_SCOPE'
-            value: '<FRONTEND_API_SCOPE>'
+            value: webScope
           }
           {
             name: 'APP_API_SCOPE'
-            value: '<BACKEND_API_SCOPE>'
+            value: apiScope
           }
           {
             name: 'APP_REDIRECT_URL'
-            value: '/'
+            value: webRedirectUrl
           }
           {
             name: 'APP_POST_REDIRECT_URL'
-            value: '/'
+            value: webPostRedirectUrl
           }
           {
             name: 'APP_CONSOLE_LOG_ENABLED'
