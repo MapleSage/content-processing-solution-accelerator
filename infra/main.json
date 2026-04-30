@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.42.1.51946",
-      "templateHash": "10724242613929339394"
+      "templateHash": "3579670615834437806"
     },
     "name": "Content Processing Solution Accelerator",
     "description": "Bicep template to deploy the Content Processing Solution Accelerator with AVM compliance."
@@ -218,6 +218,83 @@
       "defaultValue": "",
       "metadata": {
         "description": "Optional. Admin password for the Jumpbox Virtual Machine. Set to custom value if enablePrivateNetworking is true."
+      }
+    },
+    "hubspotClientId": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. HubSpot OAuth client ID for FNOL/UW integration."
+      }
+    },
+    "hubspotClientSecret": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. HubSpot OAuth client secret."
+      }
+    },
+    "hubspotRefreshToken": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. HubSpot OAuth refresh token."
+      }
+    },
+    "hubspotRedirectUri": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. HubSpot OAuth redirect URI."
+      }
+    },
+    "hubspotEnableFnolIntegration": {
+      "type": "string",
+      "defaultValue": "false",
+      "metadata": {
+        "description": "Optional. Set to true to enable FNOL → HubSpot Ticket routing."
+      }
+    },
+    "hubspotFnolSchemaIds": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. Comma-separated schema IDs to treat as FNOL documents."
+      }
+    },
+    "hubspotFnolPipelineId": {
+      "type": "string",
+      "defaultValue": "0",
+      "metadata": {
+        "description": "Optional. HubSpot pipeline ID for FNOL tickets."
+      }
+    },
+    "hubspotFnolStageId": {
+      "type": "string",
+      "defaultValue": "1",
+      "metadata": {
+        "description": "Optional. HubSpot stage ID for new FNOL tickets."
+      }
+    },
+    "hubspotUwPipelineId": {
+      "type": "string",
+      "defaultValue": "877072527",
+      "metadata": {
+        "description": "Optional. HubSpot pipeline ID for underwriting deals."
+      }
+    },
+    "hubspotUwStageComplete": {
+      "type": "string",
+      "defaultValue": "1314763883",
+      "metadata": {
+        "description": "Optional. HubSpot stage ID for completed UW deals."
+      }
+    },
+    "hubspotUwStageFailed": {
+      "type": "string",
+      "defaultValue": "1314763886",
+      "metadata": {
+        "description": "Optional. HubSpot stage ID for failed UW deals."
       }
     },
     "solutionUniqueText": {
@@ -36558,8 +36635,8 @@
         "avmContainerApp_API",
         "avmContainerApp_Workflow",
         "avmManagedIdentity",
-        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').storageBlob)]",
         "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').storageQueue)]",
+        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').storageBlob)]",
         "virtualNetwork"
       ]
     },
@@ -42852,10 +42929,10 @@
       },
       "dependsOn": [
         "avmAiServices",
-        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').contentUnderstanding)]",
-        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').cognitiveServices)]",
-        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').aiServices)]",
         "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').openAI)]",
+        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').contentUnderstanding)]",
+        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').aiServices)]",
+        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').cognitiveServices)]",
         "virtualNetwork"
       ]
     },
@@ -46056,9 +46133,9 @@
       },
       "dependsOn": [
         "avmAiServices_cu",
+        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').contentUnderstanding)]",
         "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').aiServices)]",
         "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').cognitiveServices)]",
-        "[format('avmPrivateDnsZones[{0}]', variables('dnsZoneIndex').contentUnderstanding)]",
         "virtualNetwork"
       ]
     },
@@ -47785,6 +47862,50 @@
                   {
                     "name": "OTEL_SERVICE_NAME",
                     "value": "ContentProcessor"
+                  },
+                  {
+                    "name": "HUBSPOT_CLIENT_ID",
+                    "value": "[parameters('hubspotClientId')]"
+                  },
+                  {
+                    "name": "HUBSPOT_CLIENT_SECRET",
+                    "value": "[parameters('hubspotClientSecret')]"
+                  },
+                  {
+                    "name": "HUBSPOT_REFRESH_TOKEN",
+                    "value": "[parameters('hubspotRefreshToken')]"
+                  },
+                  {
+                    "name": "HUBSPOT_REDIRECT_URI",
+                    "value": "[parameters('hubspotRedirectUri')]"
+                  },
+                  {
+                    "name": "HUBSPOT_ENABLE_FNOL_INTEGRATION",
+                    "value": "[parameters('hubspotEnableFnolIntegration')]"
+                  },
+                  {
+                    "name": "HUBSPOT_FNOL_SCHEMA_IDS",
+                    "value": "[parameters('hubspotFnolSchemaIds')]"
+                  },
+                  {
+                    "name": "HUBSPOT_FNOL_PIPELINE_ID",
+                    "value": "[parameters('hubspotFnolPipelineId')]"
+                  },
+                  {
+                    "name": "HUBSPOT_FNOL_STAGE_ID",
+                    "value": "[parameters('hubspotFnolStageId')]"
+                  },
+                  {
+                    "name": "HUBSPOT_UW_PIPELINE_ID",
+                    "value": "[parameters('hubspotUwPipelineId')]"
+                  },
+                  {
+                    "name": "HUBSPOT_UW_STAGE_COMPLETE",
+                    "value": "[parameters('hubspotUwStageComplete')]"
+                  },
+                  {
+                    "name": "HUBSPOT_UW_STAGE_FAILED",
+                    "value": "[parameters('hubspotUwStageFailed')]"
                   }
                 ]
               }

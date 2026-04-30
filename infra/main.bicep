@@ -124,6 +124,42 @@ param vmAdminUsername string = ''
 @secure()
 param vmAdminPassword string = ''
 
+@description('Optional. HubSpot OAuth client ID for FNOL/UW integration.')
+@secure()
+param hubspotClientId string = ''
+
+@description('Optional. HubSpot OAuth client secret.')
+@secure()
+param hubspotClientSecret string = ''
+
+@description('Optional. HubSpot OAuth refresh token.')
+@secure()
+param hubspotRefreshToken string = ''
+
+@description('Optional. HubSpot OAuth redirect URI.')
+param hubspotRedirectUri string = ''
+
+@description('Optional. Set to true to enable FNOL → HubSpot Ticket routing.')
+param hubspotEnableFnolIntegration string = 'false'
+
+@description('Optional. Comma-separated schema IDs to treat as FNOL documents.')
+param hubspotFnolSchemaIds string = ''
+
+@description('Optional. HubSpot pipeline ID for FNOL tickets.')
+param hubspotFnolPipelineId string = '0'
+
+@description('Optional. HubSpot stage ID for new FNOL tickets.')
+param hubspotFnolStageId string = '1'
+
+@description('Optional. HubSpot pipeline ID for underwriting deals.')
+param hubspotUwPipelineId string = '877072527'
+
+@description('Optional. HubSpot stage ID for completed UW deals.')
+param hubspotUwStageComplete string = '1314763883'
+
+@description('Optional. HubSpot stage ID for failed UW deals.')
+param hubspotUwStageFailed string = '1314763886'
+
 @maxLength(5)
 @description('Optional. A unique text value for the solution. This is used to ensure resource names are unique for global resources. Defaults to a 5-character substring of the unique string generated from the subscription ID, resource group name, and solution name.')
 param solutionUniqueText string = substring(uniqueString(subscription().id, resourceGroup().name, solutionName), 0, 5)
@@ -1009,6 +1045,50 @@ module avmContainerApp 'br/public:avm/res/app/container-app:0.22.1' = {
           {
             name: 'OTEL_SERVICE_NAME'
             value: 'ContentProcessor'
+          }
+          {
+            name: 'HUBSPOT_CLIENT_ID'
+            value: hubspotClientId
+          }
+          {
+            name: 'HUBSPOT_CLIENT_SECRET'
+            value: hubspotClientSecret
+          }
+          {
+            name: 'HUBSPOT_REFRESH_TOKEN'
+            value: hubspotRefreshToken
+          }
+          {
+            name: 'HUBSPOT_REDIRECT_URI'
+            value: hubspotRedirectUri
+          }
+          {
+            name: 'HUBSPOT_ENABLE_FNOL_INTEGRATION'
+            value: hubspotEnableFnolIntegration
+          }
+          {
+            name: 'HUBSPOT_FNOL_SCHEMA_IDS'
+            value: hubspotFnolSchemaIds
+          }
+          {
+            name: 'HUBSPOT_FNOL_PIPELINE_ID'
+            value: hubspotFnolPipelineId
+          }
+          {
+            name: 'HUBSPOT_FNOL_STAGE_ID'
+            value: hubspotFnolStageId
+          }
+          {
+            name: 'HUBSPOT_UW_PIPELINE_ID'
+            value: hubspotUwPipelineId
+          }
+          {
+            name: 'HUBSPOT_UW_STAGE_COMPLETE'
+            value: hubspotUwStageComplete
+          }
+          {
+            name: 'HUBSPOT_UW_STAGE_FAILED'
+            value: hubspotUwStageFailed
           }
         ]
       }

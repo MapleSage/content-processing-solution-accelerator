@@ -37,6 +37,39 @@
     },
     "imageTag": {
       "value": "${AZURE_ENV_IMAGETAG=latest_v2}"
+    },
+    "hubspotClientId": {
+      "value": "${HUBSPOT_CLIENT_ID}"
+    },
+    "hubspotClientSecret": {
+      "value": "${HUBSPOT_CLIENT_SECRET}"
+    },
+    "hubspotRefreshToken": {
+      "value": "${HUBSPOT_REFRESH_TOKEN}"
+    },
+    "hubspotRedirectUri": {
+      "value": "${HUBSPOT_REDIRECT_URI}"
+    },
+    "hubspotEnableFnolIntegration": {
+      "value": "${HUBSPOT_ENABLE_FNOL_INTEGRATION=false}"
+    },
+    "hubspotFnolSchemaIds": {
+      "value": "${HUBSPOT_FNOL_SCHEMA_IDS}"
+    },
+    "hubspotFnolPipelineId": {
+      "value": "${HUBSPOT_FNOL_PIPELINE_ID=0}"
+    },
+    "hubspotFnolStageId": {
+      "value": "${HUBSPOT_FNOL_STAGE_ID=1}"
+    },
+    "hubspotUwPipelineId": {
+      "value": "${HUBSPOT_UW_PIPELINE_ID=877072527}"
+    },
+    "hubspotUwStageComplete": {
+      "value": "${HUBSPOT_UW_STAGE_COMPLETE=1314763883}"
+    },
+    "hubspotUwStageFailed": {
+      "value": "${HUBSPOT_UW_STAGE_FAILED=1314763886}"
     }
   }
 }
