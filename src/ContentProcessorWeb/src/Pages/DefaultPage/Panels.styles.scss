@@ -1,165 +1,197 @@
-.layout {
-  display: flex;
+/* ============================================================
+   SageSure FNOL — Content Processor
+   Design: Precision Insurance Intelligence
+   Palette: Deep Navy + Slate + Electric Blue accent
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+
+/* ─── Design tokens ─── */
+:root {
+  --ss-navy:          #0D1B2A;
+  --ss-navy-mid:      #152236;
+  --ss-navy-light:    #1E3250;
+  --ss-slate:         #253B52;
+  --ss-border:        #1F3347;
+  --ss-border-light:  #2A4460;
+  --ss-accent:        #2B7FFF;
+  --ss-accent-hover:  #4D96FF;
+  --ss-accent-glow:   rgba(43,127,255,0.15);
+  --ss-success:       #22C55E;
+  --ss-warning:       #F59E0B;
+  --ss-danger:        #EF4444;
+  --ss-text-primary:  #E8EFF7;
+  --ss-text-secondary:#8BA3BC;
+  --ss-text-muted:    #526A82;
+  --ss-bg-panel:      #111D2C;
+  --ss-bg-row:        #152236;
+  --ss-bg-row-hover:  #1A2C42;
+  --ss-bg-row-active: #1D3650;
+  --ss-bg-input:      #0D1B2A;
+  --ss-radius:        6px;
+  --ss-radius-lg:     10px;
+  --ss-shadow:        0 4px 24px rgba(0,0,0,0.4);
+  --ss-font:          'DM Sans', system-ui, sans-serif;
+  --ss-mono:          'DM Mono', 'Cascadia Code', monospace;
+  --transition:       all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Panel container styling */
+/* ─── Global reset for FNOL app ─── */
+.layout,
+.layout * {
+  font-family: var(--ss-font) !important;
+  box-sizing: border-box;
+}
+
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--ss-navy);
+
+  /* Override Fluent UI color vars at layout level */
+  --colorNeutralBackground1:        var(--ss-bg-panel);
+  --colorNeutralBackground2:        var(--ss-navy-mid);
+  --colorNeutralBackground3:        var(--ss-navy-light);
+  --colorNeutralBackground3Pressed: var(--ss-border);
+  --colorNeutralBackground4:        var(--ss-slate);
+  --colorNeutralForeground1:        var(--ss-text-primary);
+  --colorNeutralForeground2:        var(--ss-text-secondary);
+  --colorBrandBackground:           var(--ss-accent);
+  --colorBrandForeground:           var(--ss-accent);
+  --colorPaletteRedBackground3:     var(--ss-danger);
+}
+
+/* ─── Scrollbars ─── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ss-border-light) transparent;
+}
+*::-webkit-scrollbar      { width: 5px; height: 5px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--ss-border-light);
+  border-radius: 3px;
+}
+
+/* ════════════════════════════════════════════
+   LEFT PANEL — Processing Queue
+   ════════════════════════════════════════════ */
 
 .panelLeftLayout {
   position: relative;
   display: flex;
-  height: 100%;
-  box-sizing: border-box;
   flex-direction: column;
-  overflow-y: auto;
-  background-color: var(--colorNeutralBackground1);
-  border: 1px solid var(--colorNeutralBackground3Pressed);
-  border-width: 1px 1px 0px 0px;
-  flex: 37%;
+  height: 100%;
+  flex: 0 0 380px;
   min-width: 300px;
+  background: var(--ss-navy);
+  border-right: 1px solid var(--ss-border);
+  overflow: hidden;
+  transition: flex 0.25s ease, width 0.25s ease;
 
-  .collapseButtonDiv {
-    display: none;
-  }
-
+  .collapseButtonDiv { display: none; }
 
   .panelLeft {
-    position: relative;
     display: flex;
-    height: 100%;
-    box-sizing: border-box;
     flex-direction: column;
-    overflow-y: auto;
-    background-color: var(--colorNeutralBackground1);
-    border: 1px solid var(--colorNeutralBackground3Pressed);
-    border-width: 1px 1px 0px 0px;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .topContainer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px 14px;
+    border-bottom: 1px solid var(--ss-border);
+    background: var(--ss-navy-mid);
   }
 
   .leftcontent {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-    overflow: hidden;
-    box-sizing: border-box;
-    padding: 0px 16px 16px 16px;
-    height: 100%;
-    width: 100%;
-    margin: auto;
+    overflow-y: auto;
     overflow-x: hidden;
-    overflow-y: hidden;
+    padding: 0;
   }
-
-  .topContainer {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: end;
-    gap: 10px;
-    padding: 0px 16px 16px 16px;
-  }
-
-  @media (max-width: 1600px) {
-    .topContainer {
-      flex-wrap: wrap;
-      align-items: center;
-    }
-  }
-
-
 }
 
 .panelLeftLayout.collapse {
-  flex: none;
-  width: auto;
-  min-width: 20px;
-  transition: width 0.3s ease;
+  flex: 0 0 28px;
+  min-width: 28px;
 
-  .collapseButtonDiv {
-    display: block !important;
-  }
-
-  .panelLeft {
-    display: none !important;
-  }
+  .collapseButtonDiv { display: block !important; }
+  .panelLeft         { display: none !important; }
 }
+
+/* ════════════════════════════════════════════
+   CENTER PANEL — Output Review
+   ════════════════════════════════════════════ */
 
 .panelCenter {
   display: flex;
-  flex: 1;
+  flex: 1 1 0;
   flex-direction: column;
-  width: 100%;
-  height: 100%;
-  align-items: start;
-  box-sizing: border-box;
+  min-width: 320px;
+  background: var(--ss-bg-panel);
+  border-right: 1px solid var(--ss-border);
+  overflow: hidden;
 
-  flex: 31%;
-  min-width: 280px;
-  background: var(--colorNeutralBackground1);
-  border: 2px solid var(--colorNeutralBackground3Pressed);
-  border-width: 2px 2px 0 0;
+  .collapseButtonDiv { display: none; }
 
+  /* Tab bar tweaks */
   .custom-test button {
-    padding: 0px !important;
-    padding: 5px 12px 12px 10px !important
+    padding: 6px 14px 10px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: var(--ss-text-secondary) !important;
+    letter-spacing: 0.01em;
   }
 
   .saveBtnDiv {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    gap: 12px;
 
     .msgp {
-      margin: auto;
-      color: var(--colorPaletteRedBackground3);
+      font-size: 12px;
+      color: var(--ss-warning);
+      font-weight: 500;
     }
-  }
-
-  .collapseButtonDiv {
-    display: none;
   }
 }
 
 .panelCenter.collapse {
-  flex: none;
-  width: auto;
-  min-width: 20px;
-  border: 1px solid var(--colorNeutralBackground3Pressed);
-  border-width: 1px 1px 0 0;
+  flex: 0 0 28px;
+  min-width: 28px;
 
-  .collapseButtonDiv {
-    display: block !important;
-  }
-
-  .pc {
-    display: none !important;
-  }
+  .collapseButtonDiv { display: block !important; }
+  .pc                { display: none !important; }
 }
 
+/* ════════════════════════════════════════════
+   RIGHT PANEL — Source Document
+   ════════════════════════════════════════════ */
 
 .panelRight {
   position: relative;
   display: flex;
-  height: 100%;
-  box-sizing: border-box;
   flex-direction: column;
-  overflow-y: auto;
-  background-color: var(--colorNeutralBackground1);
-
-  flex: 31%;
+  flex: 0 0 420px;
   min-width: 280px;
-  border: 1px solid var(--colorNeutralBackground3Pressed);
-  border-width: 1px 1px 0 0;
+  background: var(--ss-navy);
+  overflow: hidden;
 
   .panelRightContent {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-    overflow: scroll;
-    box-sizing: border-box;
-    padding: 0px 16px 16px 16px;
-    height: 100%;
-    width: 100%;
-    margin: auto;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
+    padding: 12px 16px 16px;
   }
 
   .right-loader {
@@ -167,56 +199,578 @@
     justify-content: center;
     align-items: center;
     height: 100%;
+    color: var(--ss-text-muted);
+    font-size: 13px;
+    gap: 8px;
+
+    &::before {
+      content: '';
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--ss-border-light);
+      border-top-color: var(--ss-accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
   }
 
-  .collapseButtonDiv {
-    display: none;
-  }
-
+  .collapseButtonDiv { display: none; }
 }
 
 .panelRight.collapse {
-  flex: none;
-  width: auto;
-  min-width: 20px;
+  flex: 0 0 28px;
+  min-width: 28px;
 
-  .collapseButtonDiv {
-    display: block !important;
-  }
-
-  .pr {
-    display: none !important;
-  }
+  .collapseButtonDiv { display: block !important; }
+  .pr                { display: none !important; }
 }
+
+/* ════════════════════════════════════════════
+   PANEL TOOLBAR
+   ════════════════════════════════════════════ */
 
 .panelToolbar {
   display: flex;
   width: 100%;
   align-items: center;
-  padding: 16px 16px;
-  min-height: 64px;
   justify-content: space-between;
-  box-sizing: border-box;
-  backdrop-filter: saturate(180%) blur(16px);
-  transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+  padding: 0 16px;
+  min-height: 52px;
+  background: var(--ss-navy-mid);
+  border-bottom: 1px solid var(--ss-border);
+
+  /* Toolbar heading */
+  > span,
+  > h3,
+  > div:first-child {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    color: var(--ss-text-secondary) !important;
+  }
+
+  /* Collapse button */
+  button[title="Collapse Panel"] {
+    background: transparent !important;
+    border: 1px solid var(--ss-border-light) !important;
+    color: var(--ss-text-muted) !important;
+    border-radius: var(--ss-radius) !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: unset !important;
+    padding: 0 !important;
+    transition: var(--transition) !important;
+
+    &:hover {
+      border-color: var(--ss-accent) !important;
+      color: var(--ss-accent) !important;
+      background: var(--ss-accent-glow) !important;
+    }
+  }
 }
 
-.fullHeight {
-  height: 100vh;
-}
+/* ════════════════════════════════════════════
+   ROTATE BUTTON (collapsed panel label)
+   ════════════════════════════════════════════ */
 
 .rotate-button {
   writing-mode: vertical-rl;
   text-orientation: mixed;
-  height: auto;
-  width: fit-content;
-  cursor: pointer;
-  min-width: 10px !important;
-
-  height: 172px;
-  padding: 16px 5px !important;
+  height: 160px;
+  width: 28px;
+  padding: 14px 5px !important;
   text-transform: uppercase;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.12em;
+  color: var(--ss-text-muted) !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  min-width: unset !important;
+  transition: color 0.18s ease;
+
+  &:hover { color: var(--ss-accent) !important; }
+}
+
+/* ════════════════════════════════════════════
+   FLUENT UI COMPONENT OVERRIDES
+   ════════════════════════════════════════════ */
+
+/* ── Buttons ── */
+.fui-Button {
+  font-family: var(--ss-font) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border-radius: var(--ss-radius) !important;
+  transition: var(--transition) !important;
+}
+
+/* Primary button */
+.fui-Button[data-appearance="primary"],
+button[class*="primary"] {
+  background: var(--ss-accent) !important;
+  color: #fff !important;
+  border: none !important;
+
+  &:hover {
+    background: var(--ss-accent-hover) !important;
+    box-shadow: 0 0 0 3px var(--ss-accent-glow) !important;
+  }
+  &:disabled {
+    background: var(--ss-border) !important;
+    color: var(--ss-text-muted) !important;
+    opacity: 0.6 !important;
+  }
+}
+
+/* Outline button */
+.fui-Button[data-appearance="outline"],
+button[class*="outline"] {
+  background: transparent !important;
+  border: 1px solid var(--ss-border-light) !important;
+  color: var(--ss-text-secondary) !important;
+
+  &:hover {
+    border-color: var(--ss-accent) !important;
+    color: var(--ss-accent) !important;
+    background: var(--ss-accent-glow) !important;
+  }
+}
+
+/* ── Tabs ── */
+.fui-TabList {
+  background: transparent !important;
+  border-bottom: 1px solid var(--ss-border) !important;
+  padding: 0 !important;
+  gap: 0 !important;
+}
+
+.fui-Tab {
   font-size: 12px !important;
-  letter-spacing: 1px;
-  word-spacing: 3px;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em !important;
+  color: var(--ss-text-muted) !important;
+  border-radius: 0 !important;
+  padding: 10px 16px !important;
+  border-bottom: 2px solid transparent !important;
+  margin-bottom: -1px !important;
+  transition: var(--transition) !important;
+
+  &:hover {
+    color: var(--ss-text-primary) !important;
+    background: var(--ss-accent-glow) !important;
+  }
+
+  &[aria-selected="true"] {
+    color: var(--ss-accent) !important;
+    border-bottom-color: var(--ss-accent) !important;
+    background: transparent !important;
+    font-weight: 600 !important;
+  }
+}
+
+/* ── Textarea / Comments ── */
+.fui-Textarea,
+.fui-Field textarea {
+  background: var(--ss-bg-input) !important;
+  border: 1px solid var(--ss-border-light) !important;
+  border-radius: var(--ss-radius) !important;
+  color: var(--ss-text-primary) !important;
+  font-family: var(--ss-mono) !important;
+  font-size: 12px !important;
+  resize: vertical !important;
+  transition: border-color 0.18s ease !important;
+
+  &:focus, &:focus-within {
+    border-color: var(--ss-accent) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px var(--ss-accent-glow) !important;
+  }
+}
+
+.fui-Field__label,
+.fui-Label {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.07em !important;
+  text-transform: uppercase !important;
+  color: var(--ss-text-muted) !important;
+  margin-bottom: 6px !important;
+}
+
+/* ── Dropdown / Select ── */
+.fui-Dropdown,
+.fui-Select select,
+.fui-Combobox {
+  background: var(--ss-bg-input) !important;
+  border: 1px solid var(--ss-border-light) !important;
+  border-radius: var(--ss-radius) !important;
+  color: var(--ss-text-primary) !important;
+  font-size: 13px !important;
+  height: 34px !important;
+
+  &:focus, &:focus-within {
+    border-color: var(--ss-accent) !important;
+    box-shadow: 0 0 0 3px var(--ss-accent-glow) !important;
+  }
+}
+
+/* ── Divider ── */
+.fui-Divider {
+  border-color: var(--ss-border) !important;
+  margin: 0 !important;
+}
+
+/* ── Popover / Listbox ── */
+.fui-Listbox,
+.fui-Popover__content,
+[role="listbox"] {
+  background: var(--ss-navy-mid) !important;
+  border: 1px solid var(--ss-border-light) !important;
+  border-radius: var(--ss-radius-lg) !important;
+  box-shadow: var(--ss-shadow) !important;
+  padding: 4px !important;
+}
+
+.fui-Option {
+  border-radius: var(--ss-radius) !important;
+  color: var(--ss-text-secondary) !important;
+  font-size: 13px !important;
+  padding: 7px 10px !important;
+
+  &:hover, &[aria-selected="true"] {
+    background: var(--ss-accent-glow) !important;
+    color: var(--ss-accent) !important;
+  }
+}
+
+/* ════════════════════════════════════════════
+   DATA GRID — Processing Queue
+   ════════════════════════════════════════════ */
+
+/* Fluent DataGrid */
+.fui-DataGrid,
+[data-testid="data-grid"],
+[role="grid"] {
+  background: transparent !important;
+  border: none !important;
+  font-size: 12px !important;
+  font-family: var(--ss-font) !important;
+  width: 100% !important;
+}
+
+/* Header row */
+.fui-DataGridHeader,
+.fui-DataGridHeaderCell,
+[role="columnheader"] {
+  background: var(--ss-navy-mid) !important;
+  color: var(--ss-text-muted) !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  border-bottom: 1px solid var(--ss-border) !important;
+  padding: 8px 10px !important;
+  white-space: nowrap !important;
+}
+
+/* Data rows */
+.fui-DataGridRow,
+[role="row"]:not([data-row-type="header"]) {
+  background: var(--ss-bg-row) !important;
+  border-bottom: 1px solid var(--ss-border) !important;
+  transition: background 0.12s ease !important;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--ss-bg-row-hover) !important;
+  }
+
+  &[aria-selected="true"],
+  &.selected {
+    background: var(--ss-bg-row-active) !important;
+    box-shadow: inset 3px 0 0 var(--ss-accent) !important;
+  }
+}
+
+/* Data cells */
+.fui-DataGridCell,
+[role="gridcell"] {
+  color: var(--ss-text-primary) !important;
+  font-size: 12px !important;
+  padding: 9px 10px !important;
+  border: none !important;
+  vertical-align: middle !important;
+}
+
+/* ─── Status badges ─── */
+.status-badge,
+[class*="status"],
+[class*="badge"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: capitalize;
+}
+
+/* Score indicators — triangle icons inherit color from Fluent */
+/* high score = green tint */
+.fui-DataGridCell span[class*="score"],
+[class*="entity-score"],
+[class*="schema-score"] {
+  font-family: var(--ss-mono) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+
+/* ════════════════════════════════════════════
+   CENTER PANEL INTERNALS
+   ════════════════════════════════════════════ */
+
+.panelCenterTopSection {
+  padding: 0 16px 16px !important;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.panelCenterBottomSection,
+[class*="panelCenterBottomSeciton"] {
+  padding: 12px 16px !important;
+  background: var(--ss-navy-mid) !important;
+  border-top: 1px solid var(--ss-border) !important;
+  position: relative;
+}
+
+/* Tab content containers */
+[class*="tabItemCotnent"],
+[class*="processTabItemCotnent"] {
+  background: var(--ss-bg-input) !important;
+  border: 1px solid var(--ss-border) !important;
+  border-radius: var(--ss-radius-lg) !important;
+  padding: 8px !important;
+  overflow: auto !important;
+}
+
+/* ─── JSON Editor styling ─── */
+.json-editor,
+[class*="JSONEditor"],
+[class*="json-editor"] {
+  background: transparent !important;
+  color: var(--ss-text-primary) !important;
+  font-family: var(--ss-mono) !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+
+  .string  { color: #7DD3A8 !important; }  /* green */
+  .number  { color: #F0A04B !important; }  /* amber */
+  .boolean { color: var(--ss-accent) !important; }
+  .null    { color: var(--ss-text-muted) !important; }
+  .key     { color: #8BA3BC !important; }  /* slate blue */
+}
+
+/* Process Steps */
+[class*="ProcessSteps"],
+[class*="process-steps"] {
+  color: var(--ss-text-primary) !important;
+  font-size: 12px !important;
+}
+
+/* ════════════════════════════════════════════
+   SAVE BUTTON AREA
+   ════════════════════════════════════════════ */
+
+[class*="saveButton"],
+.saveBtnDiv button[appearance="primary"] {
+  background: var(--ss-accent) !important;
+  color: #fff !important;
+  border-radius: var(--ss-radius) !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  height: 32px !important;
+  padding: 0 18px !important;
+  letter-spacing: 0.03em !important;
+  transition: var(--transition) !important;
+
+  &:hover:not(:disabled) {
+    background: var(--ss-accent-hover) !important;
+    box-shadow: 0 0 12px var(--ss-accent-glow) !important;
+  }
+  &:disabled {
+    opacity: 0.4 !important;
+  }
+}
+
+/* ════════════════════════════════════════════
+   MODAL / UPLOAD DIALOG
+   ════════════════════════════════════════════ */
+
+.fui-Dialog__surface,
+.fui-DialogSurface {
+  background: var(--ss-navy-mid) !important;
+  border: 1px solid var(--ss-border-light) !important;
+  border-radius: var(--ss-radius-lg) !important;
+  box-shadow: var(--ss-shadow) !important;
+  color: var(--ss-text-primary) !important;
+}
+
+.fui-DialogTitle {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: var(--ss-text-primary) !important;
+}
+
+/* ════════════════════════════════════════════
+   TOAST NOTIFICATIONS
+   ════════════════════════════════════════════ */
+
+.Toastify__toast {
+  background: var(--ss-navy-mid) !important;
+  border: 1px solid var(--ss-border-light) !important;
+  border-radius: var(--ss-radius-lg) !important;
+  color: var(--ss-text-primary) !important;
+  font-family: var(--ss-font) !important;
+  font-size: 13px !important;
+}
+
+.Toastify__toast--error   { border-left: 3px solid var(--ss-danger) !important; }
+.Toastify__toast--success { border-left: 3px solid var(--ss-success) !important; }
+.Toastify__toast--warning { border-left: 3px solid var(--ss-warning) !important; }
+
+/* ════════════════════════════════════════════
+   DOCUMENT VIEWER (right panel)
+   ════════════════════════════════════════════ */
+
+.fullHeight,
+[class*="DocumentViewer"],
+[class*="document-viewer"] {
+  height: 100% !important;
+  border-radius: var(--ss-radius-lg) !important;
+  overflow: hidden !important;
+  border: 1px solid var(--ss-border) !important;
+}
+
+iframe {
+  border: none !important;
+  border-radius: var(--ss-radius-lg) !important;
+}
+
+/* ════════════════════════════════════════════
+   LOADING STATES
+   ════════════════════════════════════════════ */
+
+[class*="apiLoader"],
+[class*="api-loader"] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--ss-text-muted);
+  font-size: 12px;
+  gap: 8px;
+
+  &::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--ss-border-light);
+    border-top-color: var(--ss-accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+}
+
+/* ════════════════════════════════════════════
+   ANIMATIONS
+   ════════════════════════════════════════════ */
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.layout { animation: fadeIn 0.3s ease forwards; }
+
+/* ════════════════════════════════════════════
+   PANEL TOOLBAR HEADER — SageSure logo bar
+   ════════════════════════════════════════════ */
+
+/* App-level header if present */
+header,
+nav,
+[class*="app-header"],
+[class*="AppHeader"] {
+  background: var(--ss-navy) !important;
+  border-bottom: 1px solid var(--ss-border) !important;
+  color: var(--ss-text-primary) !important;
+}
+
+/* ─── Panel label typography ─── */
+[class*="panelLabel"] {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--ss-text-muted) !important;
+}
+
+/* ─── "No data available" states ─── */
+p[style*="text-align: center"] {
+  color: var(--ss-text-muted) !important;
+  font-size: 13px !important;
+  padding: 32px 16px !important;
+}
+
+/* ════════════════════════════════════════════
+   SCHEMA DROPDOWN specific
+   ════════════════════════════════════════════ */
+
+[class*="SchemaDropdown"] {
+  .fui-Combobox,
+  .fui-Dropdown {
+    min-width: 180px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* ─── Refresh / Import button row ─── */
+.topContainer {
+  .fui-Button {
+    height: 34px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+  }
+}
+
+/* ════════════════════════════════════════════
+   "AI-generated content" disclaimer bar
+   ════════════════════════════════════════════ */
+
+[class*="disclaimer"],
+[class*="ai-notice"] {
+  font-size: 11px !important;
+  color: var(--ss-text-muted) !important;
+  background: rgba(43,127,255,0.05) !important;
+  border-radius: var(--ss-radius) !important;
+  padding: 4px 10px !important;
+}
+
+/* ─── Page level note (top right of app.sagesure.io) ─── */
+.fui-InfoLabel,
+[class*="infoLabel"] {
+  font-size: 11px !important;
+  color: var(--ss-text-muted) !important;
 }
